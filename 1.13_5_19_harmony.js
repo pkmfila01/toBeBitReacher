@@ -1,9 +1,9 @@
 // Settings
-var baseBet = 80; // In bits
+var baseBet = 1; // In bits
 var baseMultiplier = 1.13; // Target multiplier: 1.13 recommended
-var variableBase = true; // Enable variable mode (very experimental), read streakSecurity.
+var variableBase = false; // Enable variable mode (very experimental), read streakSecurity.
 var streakSecurity = 4; // Number of loss-streak you wanna be safe for. Increasing this massively reduces the variableBase calculated. (1-loss = 20%, 2-loss = 5%, 3-loss = 1.25% of your maximum balance). Recommended: 2+
-var maximumBet = 1000; // Maximum bet the bot will do (in bits).
+var maximumBet = 100; // Maximum bet the bot will do (in bits).
 var change5underCount = 10;
 var change19underCount = 20;
 
@@ -19,6 +19,8 @@ var under5count = 0;
 var under19count = 0;
 var mode5 = false;
 var mode19 = false;
+
+var cur1 = currentBet;
 
 // Initialization
 console.log('====== Procon\'s BustaBit Bot ======');
@@ -54,12 +56,18 @@ engine.on('game_starting', function(info) {
 	
 	if(mode19){
         console.log('[DEBUG] 19 mode gogo');
-		currentBet = getMulti(currentBet, 1.08);
+        
+		cur1 = cur1 * 1.08;
+		currentBet = getMulti(cur1, 1);
+		
 		currentMultiplier = 19;
 	}
 	else if(mode5){
         console.log('[DEBUG] 5 mode gogo');
-		currentBet = getMulti(currentBet, 1.28);
+        
+		cur1 = cur1 * 1.28;
+		currentBet = getMulti(cur1, 1);
+		
 		currentMultiplier = 5;
 	}
 	
@@ -102,6 +110,8 @@ engine.on('game_starting', function(info) {
 			// Update bet.
 			currentBet = baseSatoshi; // in Satoshi
 			currentMultiplier = baseMultiplier;
+			
+			cur1  = currentBet;
 		}
 	}
 
@@ -172,8 +182,8 @@ engine.on('game_crash', function(data) {
     if (!firstGame) {
         console.log('[Bot] Game crashed at ' + (data.game_crash / 100) + 'x');
     }
-	console.log('[DEBUG] mode19 ' + mode19);
-	console.log('[DEBUG] mode5 ' + mode5);
+	console.log('[DEBUG] under5count ' + under5count);
+	console.log('[DEBUG] under19count ' + under19count);
 });
 
 
